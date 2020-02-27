@@ -4,8 +4,9 @@ import User from '../app/models/User';
 import Recipient from '../app/models/Recipient';
 import DeliveryMan from '../app/models/DeliveryMan';
 import File from '../app/models/File';
+import Delivery from '../app/models/Delivery';
 
-const models = [User, Recipient, File, DeliveryMan];
+const models = [User, Recipient, File, DeliveryMan, Delivery];
 
 class Datase {
   constructor() {

@@ -60,9 +60,10 @@ class DeliveryManController {
     return res.json(deliveryman);
   }
 
-  async destroy(req) {
+  async destroy(req, res) {
     const deliveryman = await DeliveryMan.findByPk(req.params.id);
     await deliveryman.destroy();
+    return res.json({ ok: true });
   }
 }
 
