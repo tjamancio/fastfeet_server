@@ -9,6 +9,7 @@ import authMiddleware from './app/middlewares/auth';
 import FileController from './app/controllers/FileController';
 import DeliveryManController from './app/controllers/DeliveryManController';
 import DeliveryController from './app/controllers/DeliveryController';
+import ScheduleController from './app/controllers/ScheduleController';
 
 const routes = new Router();
 const upload = multer(multerConfig);
@@ -26,11 +27,21 @@ routes.post('/deliverymen', DeliveryManController.store);
 routes.put('/deliverymen/:id', DeliveryManController.update);
 routes.delete('/deliverymen/:id', DeliveryManController.destroy);
 
-routes.get('/delivery', DeliveryController.index);
-routes.get('/delivery/:id', DeliveryController.show);
-routes.post('/delivery', DeliveryController.store);
-routes.put('/delivery/:id', DeliveryController.update);
-routes.delete('/delivery/:id', DeliveryController.destroy);
+routes.get('/deliverymen/:deliverymanId/deliveries', ScheduleController.index);
+routes.put(
+  '/deliverymen/:deliverymanId/deliveries/:deliveryId/withdraw',
+  ScheduleController.withdraw
+);
+routes.put(
+  '/deliverymen/:deliverymanId/deliveries/:deliveryId/finish',
+  ScheduleController.finish
+);
+
+routes.get('/deliveries', DeliveryController.index);
+routes.get('/deliveries/:id', DeliveryController.show);
+routes.post('/deliveries', DeliveryController.store);
+routes.put('/deliveries/:id', DeliveryController.update);
+routes.delete('/deliveries/:id', DeliveryController.destroy);
 
 routes.post('/files', upload.single('file'), FileController.store);
 

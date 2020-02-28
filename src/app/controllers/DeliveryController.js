@@ -49,7 +49,9 @@ class DeliveryController {
 
   async destroy(req, res) {
     const delivery = await Delivery.findByPk(req.params.id);
-    await delivery.destroy();
+    await delivery.update({
+      canceled_at: new Date(),
+    });
     return res.json({ ok: true });
   }
 }
