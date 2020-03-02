@@ -3,6 +3,7 @@ import Delivery from '../models/Delivery';
 import DeliveryMan from '../models/DeliveryMan';
 import Queue from '../../lib/Queue';
 import NewDeliveryMail from '../jobs/NewDeliveryMail';
+import DeliveryProblem from '../models/DeliveryProblem';
 
 const schema = Yup.object().shape({
   recipient_id: Yup.number().required(),
@@ -49,6 +50,28 @@ class DeliveryController {
 
   async destroy(req, res) {
     const delivery = await Delivery.findByPk(req.params.id);
+    await delivery.destroy();
+
+    return res.json({ ok: true });
+  }
+
+  async problems(req, res) {
+    const deliveries = await Delivery.findAll({
+      include: {
+        model: DeliveryProblem,
+        required: true,
+      },
+    });
+
+    return res.json(deliveries);
+  }
+
+  async cancel(req, res) {
+    const { problemId } = req.params;
+
+    const problem = await DeliveryProblem.findByPk(problemId);
+    const delivery = await Delivery.findByPk(problem.delivery_id);
+
     await delivery.update({
       canceled_at: new Date(),
     });
