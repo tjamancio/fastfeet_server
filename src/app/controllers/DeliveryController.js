@@ -13,7 +13,7 @@ const schema = Yup.object().shape({
 
 class DeliveryController {
   async index(req, res) {
-    const deliveries = await Delivery.findAll();
+    const deliveries = await Delivery.finddAll();
     return res.json(deliveries);
   }
 

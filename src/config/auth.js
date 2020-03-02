@@ -1,4 +1,4 @@
 export default {
-  secret: 'RockeatseatBootcamp',
+  secret: process.env.APP_SECRET,
   expiresIn: '7d',
 };
