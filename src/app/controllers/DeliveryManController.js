@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import { Op } from 'sequelize';
 import DeliveryMan from '../models/DeliveryMan';
 import File from '../models/File';
 
@@ -12,7 +13,16 @@ const schema = Yup.object().shape({
 
 class DeliveryManController {
   async index(req, res) {
+    const { q, page = 1 } = req.query;
+
     const deliverymen = await DeliveryMan.findAll({
+      where: {
+        name: {
+          [Op.iLike]: `%${q || ''}%`,
+        },
+      },
+      limit: 20,
+      offset: (page - 1) * 20,
       attributes: ['id', 'name', 'email', 'avatar_id'],
       include: [
         {

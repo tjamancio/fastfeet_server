@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import { Op } from 'sequelize';
 import Delivery from '../models/Delivery';
 import DeliveryMan from '../models/DeliveryMan';
 import Queue from '../../lib/Queue';
@@ -13,7 +14,16 @@ const schema = Yup.object().shape({
 
 class DeliveryController {
   async index(req, res) {
-    const deliveries = await Delivery.finddAll();
+    const { q, page = 1 } = req.query;
+    const deliveries = await Delivery.findAll({
+      where: {
+        product: {
+          [Op.iLike]: `%${q || ''}%`,
+        },
+      },
+      limit: 20,
+      offset: (page - 1) * 20,
+    });
     return res.json(deliveries);
   }
 
