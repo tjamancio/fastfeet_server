@@ -34,7 +34,10 @@ class App {
 
   routes() {
     this.server.use(routes);
-    this.server.use(Sentry.Handlers.errorHandler());
+
+    if (process.env.NODE_ENV === 'production') {
+      this.server.use(Sentry.Handlers.errorHandler());
+    }
   }
 
   exceptionHandler() {
