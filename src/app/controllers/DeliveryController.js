@@ -2,6 +2,7 @@ import * as Yup from 'yup';
 import { Op } from 'sequelize';
 import Delivery from '../models/Delivery';
 import DeliveryMan from '../models/DeliveryMan';
+import Recipient from '../models/Recipient';
 import Queue from '../../lib/Queue';
 import NewDeliveryMail from '../jobs/NewDeliveryMail';
 import DeliveryProblem from '../models/DeliveryProblem';
@@ -16,6 +17,7 @@ class DeliveryController {
   async index(req, res) {
     const { q, page = 1 } = req.query;
     const deliveries = await Delivery.findAll({
+      attributes: ['id', 'product'],
       where: {
         product: {
           [Op.iLike]: `%${q || ''}%`,
@@ -23,6 +25,18 @@ class DeliveryController {
       },
       limit: 20,
       offset: (page - 1) * 20,
+      include: [
+        {
+          model: Recipient,
+          as: 'recipient',
+          attributes: ['id', 'name', 'city', 'state'],
+        },
+        {
+          model: DeliveryMan,
+          as: 'deliveryman',
+          attributes: ['id', 'name'],
+        },
+      ],
     });
     return res.json(deliveries);
   }
