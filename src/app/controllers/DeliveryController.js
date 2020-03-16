@@ -17,19 +17,28 @@ class DeliveryController {
   async index(req, res) {
     const { q, page = 1 } = req.query;
     const deliveries = await Delivery.findAll({
-      attributes: ['id', 'product'],
+      attributes: ['id', 'product', 'start_date', 'end_date', 'canceled_at'],
       where: {
         product: {
           [Op.iLike]: `%${q || ''}%`,
         },
       },
+      order: ['id'],
       limit: 20,
       offset: (page - 1) * 20,
       include: [
         {
           model: Recipient,
           as: 'recipient',
-          attributes: ['id', 'name', 'city', 'state'],
+          attributes: [
+            'id',
+            'name',
+            'postalcode',
+            'street',
+            'number',
+            'city',
+            'state',
+          ],
         },
         {
           model: DeliveryMan,
