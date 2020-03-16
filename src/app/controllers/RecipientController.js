@@ -7,7 +7,6 @@ const schema = Yup.object().shape({
   street: Yup.string().required(),
   number: Yup.number(),
   complement: Yup.string(),
-  neighborhood: Yup.string().required(),
   state: Yup.string().required(),
   city: Yup.string().required(),
   postalcode: Yup.string()
