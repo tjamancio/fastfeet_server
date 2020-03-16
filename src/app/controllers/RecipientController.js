@@ -55,6 +55,12 @@ class RecipientController {
 
     return res.json(recipient);
   }
+
+  async destroy(req, res) {
+    const recipient = await Recipient.findByPk(req.params.id);
+    await recipient.destroy();
+    return res.json({ ok: true });
+  }
 }
 
 export default new RecipientController();
