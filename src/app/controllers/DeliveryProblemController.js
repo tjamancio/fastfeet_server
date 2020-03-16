@@ -1,9 +1,26 @@
 import * as Yup from 'yup';
-import Delivery from '../models/Delivery';
+import { Op } from 'sequelize';
 import DeliveryProblem from '../models/DeliveryProblem';
 
 class DeliveryProblemController {
   async index(req, res) {
+    const { q, page = 1 } = req.query;
+    const problems = await DeliveryProblem.findAll({
+      attributes: ['id', 'description', 'delivery_id'],
+      where: {
+        description: {
+          [Op.iLike]: `%${q || ''}%`,
+        },
+      },
+      order: ['delivery_id'],
+      limit: 20,
+      offset: (page - 1) * 20,
+    });
+
+    return res.json(problems);
+  }
+
+  async deliveryProblems(req, res) {
     const { deliveryId } = req.params;
     const problems = await DeliveryProblem.findAll({
       where: {

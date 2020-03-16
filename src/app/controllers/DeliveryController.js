@@ -6,6 +6,7 @@ import Recipient from '../models/Recipient';
 import Queue from '../../lib/Queue';
 import NewDeliveryMail from '../jobs/NewDeliveryMail';
 import DeliveryProblem from '../models/DeliveryProblem';
+import File from '../models/File';
 
 const schema = Yup.object().shape({
   recipient_id: Yup.number().required(),
@@ -44,6 +45,13 @@ class DeliveryController {
           model: DeliveryMan,
           as: 'deliveryman',
           attributes: ['id', 'name'],
+          include: [
+            {
+              model: File,
+              as: 'avatar',
+              attributes: ['id', 'path', 'url'],
+            },
+          ],
         },
       ],
     });
@@ -51,7 +59,21 @@ class DeliveryController {
   }
 
   async show(req, res) {
-    const delivery = await Delivery.findByPk(req.params.id);
+    const delivery = await Delivery.findByPk(req.params.id, {
+      attributes: ['id', 'product', 'recipient_id', 'deliveryman_id'],
+      include: [
+        {
+          model: Recipient,
+          as: 'recipient',
+          attributes: ['id', 'name'],
+        },
+        {
+          model: DeliveryMan,
+          as: 'deliveryman',
+          attributes: ['id', 'name'],
+        },
+      ],
+    });
     return res.json(delivery);
   }
 
@@ -86,17 +108,6 @@ class DeliveryController {
     await delivery.destroy();
 
     return res.json({ ok: true });
-  }
-
-  async problems(req, res) {
-    const deliveries = await Delivery.findAll({
-      include: {
-        model: DeliveryProblem,
-        required: true,
-      },
-    });
-
-    return res.json(deliveries);
   }
 
   async cancel(req, res) {

@@ -46,18 +46,21 @@ routes.get('/deliveries/:id', DeliveryController.show);
 routes.post('/deliveries', DeliveryController.store);
 routes.put('/deliveries/:id', DeliveryController.update);
 routes.delete('/deliveries/:id', DeliveryController.destroy);
-routes.get('/delivery-problems', DeliveryController.problems);
 
-routes.get('/deliveries/:deliveryId/problems', DeliveryProblemController.index);
+routes.get(
+  '/deliveries/:deliveryId/problems',
+  DeliveryProblemController.deliveryProblems
+);
 routes.post(
   '/deliveries/:deliveryId/problems',
   DeliveryProblemController.store
 );
 
 routes.delete(
-  '/problems/:problemId/cancel-delivery',
+  '/delivery-problems/:problemId/cancel-delivery',
   DeliveryController.cancel
 );
+routes.get('/delivery-problems', DeliveryProblemController.index);
 
 routes.post('/files', upload.single('file'), FileController.store);
 
