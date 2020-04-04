@@ -50,6 +50,29 @@ class DeliveryManController {
     return res.json(deliveryman);
   }
 
+  async signin(req, res) {
+    const { email } = req.body;
+    const deliveryman = await DeliveryMan.findOne({
+      where: {
+        email,
+      },
+      attributes: ['id', 'name', 'email', 'avatar_id', 'created_at'],
+      include: [
+        {
+          model: File,
+          as: 'avatar',
+          attributes: ['id', 'name', 'path', 'url'],
+        },
+      ],
+    });
+
+    if (!deliveryman) {
+      return res.status(401).json('Usuário não encontrado!');
+    }
+
+    return res.json(deliveryman);
+  }
+
   async store(req, res) {
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation fails' });

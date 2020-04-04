@@ -17,6 +17,28 @@ const upload = multer(multerConfig);
 
 routes.post('/sessions', SessionController.store);
 
+routes.post('/deliverymen/sessions', DeliveryManController.signin);
+routes.get('/deliverymen/:deliverymanId/deliveries', ScheduleController.index);
+routes.put(
+  '/deliverymen/:deliverymanId/deliveries/:deliveryId/withdraw',
+  ScheduleController.withdraw
+);
+routes.put(
+  '/deliverymen/:deliverymanId/deliveries/:deliveryId/finish',
+  ScheduleController.finish
+);
+
+routes.get(
+  '/deliveries/:deliveryId/problems',
+  DeliveryProblemController.deliveryProblems
+);
+routes.post(
+  '/deliveries/:deliveryId/problems',
+  DeliveryProblemController.store
+);
+
+routes.post('/files', upload.single('file'), FileController.store);
+
 routes.use(authMiddleware);
 
 routes.get('/recipients', RecipientController.index);
@@ -31,37 +53,16 @@ routes.post('/deliverymen', DeliveryManController.store);
 routes.put('/deliverymen/:id', DeliveryManController.update);
 routes.delete('/deliverymen/:id', DeliveryManController.destroy);
 
-routes.get('/deliverymen/:deliverymanId/deliveries', ScheduleController.index);
-routes.put(
-  '/deliverymen/:deliverymanId/deliveries/:deliveryId/withdraw',
-  ScheduleController.withdraw
-);
-routes.put(
-  '/deliverymen/:deliverymanId/deliveries/:deliveryId/finish',
-  ScheduleController.finish
-);
-
 routes.get('/deliveries', DeliveryController.index);
 routes.get('/deliveries/:id', DeliveryController.show);
 routes.post('/deliveries', DeliveryController.store);
 routes.put('/deliveries/:id', DeliveryController.update);
 routes.delete('/deliveries/:id', DeliveryController.destroy);
 
-routes.get(
-  '/deliveries/:deliveryId/problems',
-  DeliveryProblemController.deliveryProblems
-);
-routes.post(
-  '/deliveries/:deliveryId/problems',
-  DeliveryProblemController.store
-);
-
 routes.delete(
   '/delivery-problems/:problemId/cancel-delivery',
   DeliveryController.cancel
 );
 routes.get('/delivery-problems', DeliveryProblemController.index);
-
-routes.post('/files', upload.single('file'), FileController.store);
 
 export default routes;

@@ -2,18 +2,26 @@ import { Op } from 'sequelize';
 import * as Yup from 'yup';
 import { format, startOfDay, endOfDay } from 'date-fns';
 import Delivery from '../models/Delivery';
+import Recipient from '../models/Recipient';
 
 class ScheduleController {
   async index(req, res) {
+    const { page = 1, per_page = 20, delivered } = req.query;
     const deliveries = await Delivery.findAll({
       where: {
         deliveryman_id: req.params.deliverymanId,
         canceled_at: null,
         end_date: {
-          [req.query.delivered === '1' ? Op.ne : Op.eq]: null,
+          [delivered === '1' ? Op.ne : Op.eq]: null,
         },
       },
+      limit: per_page,
+      offset: (page - 1) * per_page,
       order: ['id'],
+      include: {
+        model: Recipient,
+        as: 'recipient',
+      },
     });
 
     return res.json(deliveries);
@@ -79,15 +87,21 @@ class ScheduleController {
       where: {
         id: deliveryId,
         deliveryman_id: deliverymanId,
-        start_date: {
-          [Op.ne]: null,
-        },
         canceled_at: null,
       },
     });
 
+    if (!delivery) {
+      return res.status(400).json({ error: 'Delivery not found' });
+    }
+
+    if (delivery.end_date) {
+      return res.status(400).json({ error: 'Delivery already delivered' });
+    }
+
     await delivery.update({
       signature_id,
+      start_date: new Date(),
       end_date: new Date(),
     });
 
